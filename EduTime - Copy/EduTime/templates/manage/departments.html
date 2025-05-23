@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Departments</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        .delete-btn { background-color: #ff6b6b; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+        .delete-btn:hover { background-color: #e74c3c; }
+        .back-link { display: inline-block; margin-top: 20px; text-decoration: none; }
+        .dept-header { font-weight: bold; color: #333; }
+        .warning-text { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Manage Departments</h2>
+
+    <table>
+        <tr><th>ID</th><th>Prefix</th><th>Name</th><th>Action</th></tr>
+        {% for d in depts %}
+        <tr>
+            <td>{{ d[0] }}</td>
+            <td>{{ d[1] }}</td>
+            <td>{{ d[2] }}</td>
+            <td>
+                <form method="post" action="{{ url_for('delete_department_route', dept_id=d[0]) }}">
+                    <button type="submit" class="delete-btn" onclick="return confirm('⚠️ CASCADE DELETE WARNING ⚠️\n\nYou are about to delete Department {{ d[1] }} ({{ d[2] }}).\n\nThis will permanently delete ALL of the following related data:\n\n- ALL instructors assigned to this department AND their user accounts\n- ALL degrees and their programs of study\n- ALL semesters and courses within those degrees\n- ALL classrooms and labs assigned to this department\n- ALL course schedules related to any of the above\n- ALL teaching assignments for instructors in this department\n\nThis cascade deletion CANNOT be undone and will result in significant data loss.\n\nAre you ABSOLUTELY SURE you want to proceed?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <a href="{{ url_for('admin_home') }}" class="back-link">← Back to Dashboard</a>
+</body>
+</html>

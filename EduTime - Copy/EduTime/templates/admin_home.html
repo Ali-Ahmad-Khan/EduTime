@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard – EduTime</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <style>
+      body { font-family: Arial, sans-serif; margin:40px; background-color: var(--accent-color); }
+      h2  { margin-bottom:10px; color: var(--text-dark); }
+      .section { 
+         margin-bottom:35px; 
+         background-color: var(--highlight-color);
+         border-radius: 8px;
+         padding: 20px;
+         box-shadow: var(--box-shadow);
+      }
+      a.btn {
+         display:inline-block; margin:4px; padding:8px 14px;
+         background: var(--primary-color); color: var(--text-dark); text-decoration:none;
+         border-radius:4px;
+         transition: all 0.2s;
+      }
+      a.btn:hover {
+         background-color: var(--dark-accent);
+         color: var(--text-light);
+      }
+      .quick-setup {
+         background-color: var(--secondary-color);
+         border: 1px solid var(--primary-color);
+         padding: 15px;
+         border-radius: 5px;
+         margin-bottom: 30px;
+      }
+      .quick-setup h3 {
+         margin-top: 0;
+         color: var(--text-dark);
+      }
+      .setup-btn {
+         background-color: var(--dark-accent) !important;
+         color: var(--text-light) !important;
+      }
+      .setup-btn:hover {
+         opacity: 0.9;
+      }
+      .header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 30px;
+         background-color: var(--primary-color);
+         padding: 15px 20px;
+         border-radius: 8px;
+         box-shadow: var(--box-shadow);
+      }
+      .header h1 {
+         margin: 0;
+         color: var(--text-dark);
+      }
+      .logout-btn {
+         background-color: var(--danger-color);
+         color: white;
+         padding: 8px 16px;
+         text-decoration: none;
+         border-radius: 4px;
+         transition: all 0.2s;
+      }
+      .logout-btn:hover {
+         background-color: #c82333;
+      }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>EduTime – Admin Dashboard</h1>
+        <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="quick-setup">
+        <h3>Quick Setup</h3>
+        <p>First time? Set up sample data with one click:</p>
+        <a class="btn setup-btn" href="{{ url_for('admin.setup_initial_data') }}">Initialize with Sample Data</a>
+    </div>
+
+    <div class="section">
+        <h2>Department & Venues</h2>
+        <a class="btn" href="{{ url_for('admin.setup_venues') }}">Add Department & Venues</a>
+        <a class="btn" href="{{ url_for('admin.manage_departments') }}">Delete Department</a>
+        <a class="btn" href="{{ url_for('admin.manage_venues') }}">Delete Venues</a>
+
+</div>
+
+    <div class="section">
+        <h2>Degrees &amp; Semesters</h2>
+        <a class="btn" href="{{ url_for('admin.setup_degrees') }}">Add Degrees</a>
+        <a class="btn" href="{{ url_for('admin.manage_degrees') }}">Delete Degrees</a>
+    </div>
+
+    <div class="section">
+        <h2>Courses</h2>
+        <a class="btn" href="{{ url_for('admin.setup_courses') }}">Add Courses</a>
+        <a class="btn" href="{{ url_for('admin.manage_courses') }}">Delete Courses</a>
+    </div>
+
+    <!--  Placeholder for next steps  -->
+<div class="section">
+  <h2>Instructors</h2>
+  <a class="btn" href="{{ url_for('admin.setup_instructors') }}">Add Instructor</a>
+  <a class="btn" href="{{ url_for('admin.manage_instructors') }}">Delete Instructor</a>
+  <a class="btn" href="{{ url_for('admin.assign_courses') }}">Assign Course</a>
+</div>
+
+<div class="section">
+  <h2>Schedule</h2>
+  <a class="btn" href="{{ url_for('schedule.generate_schedule') }}">Generate Schedule</a>
+  <a class="btn" href="{{ url_for('schedule.degrees_for_schedule') }}">View Timetables</a>
+</div>
+
+</body>
+</html>

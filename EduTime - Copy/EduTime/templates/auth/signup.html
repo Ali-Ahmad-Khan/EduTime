@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - EduTime{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card auth-card">
+        <div class="card-header">
+            <h2 class="card-title">Create Account</h2>
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="post" action="{{ url_for('auth.signup') }}">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required onchange="toggleRoleFields()">
+                        <option value="">-- Select Role --</option>
+                        <option value="STUDENT">Student</option>
+                        <option value="INSTRUCTOR">Instructor</option>
+                    </select>
+                </div>
+                
+                <div id="instructor-note" class="instructor-note">
+                    <p><strong>Note:</strong> You must be pre-registered by an administrator to sign up as an instructor. Please use the email address that was registered for you.</p>
+                </div>
+                
+                <div id="department-section" class="form-group dept-selection">
+                    <label for="department_id">Department</label>
+                    <select id="department_id" name="department_id">
+                        <option value="">-- Select Department --</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept[0] }}">{{ dept[1] }} ({{ dept[2] }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div id="student-fields" class="student-fields">
+                    <div class="form-group">
+                        <label for="cms_id">CMS ID</label>
+                        <input type="text" id="cms_id" name="cms_id" placeholder="Enter your CMS ID">
+                        <small>Required for student registration</small>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 40px 0;
+    }
+    
+    .auth-card {
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .form-actions {
+        margin-top: 1.5rem;
+    }
+    
+    .auth-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+    }
+    
+    .instructor-note {
+        display: none;
+        background-color: var(--secondary-color);
+        padding: 15px;
+        border-radius: 6px;
+        margin: 15px 0;
+    }
+    
+    .dept-selection {
+        display: none;
+    }
+    
+    .student-fields {
+        display: none;
+    }
+    
+    small {
+        color: var(--text-muted);
+        font-size: 0.8em;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleRoleFields() {
+        var role = document.getElementById('role').value;
+        var deptSection = document.getElementById('department-section');
+        var instructorNote = document.getElementById('instructor-note');
+        var studentFields = document.getElementById('student-fields');
+        var cmsIdField = document.getElementById('cms_id');
+        
+        if (role === 'INSTRUCTOR') {
+            deptSection.style.display = 'block';
+            instructorNote.style.display = 'block';
+            studentFields.style.display = 'none';
+            cmsIdField.removeAttribute('required');
+        } else if (role === 'STUDENT') {
+            deptSection.style.display = 'block';
+            instructorNote.style.display = 'none';
+            studentFields.style.display = 'block';
+            cmsIdField.setAttribute('required', 'required');
+        } else {
+            deptSection.style.display = 'none';
+            instructorNote.style.display = 'none';
+            studentFields.style.display = 'none';
+            cmsIdField.removeAttribute('required');
+        }
+    }
+    
+    // Call the function on page load
+    document.addEventListener('DOMContentLoaded', toggleRoleFields);
+</script>
+{% endblock %} 

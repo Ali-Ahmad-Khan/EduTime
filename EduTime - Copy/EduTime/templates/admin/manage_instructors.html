@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Instructors - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Manage Instructors</h1>
+    <p>View and manage faculty members</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Instructors</h3>
+        <a href="{{ url_for('admin.setup_instructors') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Instructor
+        </a>
+    </div>
+    <div class="card-body">
+        {% if instructors %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Courses</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instructor in instructors %}
+                    <tr>
+                        <td>{{ instructor[0] }}</td>
+                        <td>{{ instructor[1] }}</td>
+                        <td>{{ instructor[2] }}</td>
+                        <td>{{ instructor[3] }} ({{ instructor[4] }})</td>
+                        <td>
+                            {% if instructor[5] > 0 %}
+                                <span class="badge badge-success">{{ instructor[5] }}</span>
+                            {% else %}
+                                <span class="badge badge-warning">None</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if instructor[6] %}
+                                <span class="badge badge-success">Registered</span>
+                            {% else %}
+                                <span class="badge badge-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.assign_courses') }}?instructor_id={{ instructor[0] }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-book"></i> Assign Courses
+                            </a>
+                            <form method="post" action="{{ url_for('admin.delete_instructor_route', instructor_id=instructor[0]) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this instructor?');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No instructors found</h4>
+                <p>Start by adding instructors using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .d-inline {
+        display: inline;
+    }
+    
+    .btn-sm {
+        margin-right: 5px;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+    
+    .badge-success {
+        background-color: var(--success-color);
+        color: white;
+    }
+    
+    .badge-warning {
+        background-color: var(--warning-color);
+        color: white;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html><head><title>Manage Instructors</title></head>
+<body>
+  <h2>Manage Instructors</h2>
+  <table border="1" cellpadding="6">
+    <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Dept</th>
+        <th>Assignments</th>          <!-- ← add this -->
+        <th>Action</th>
+    </tr>
+
+{% for ins in instructors %}
+<tr>
+    <td>{{ ins[0] }}</td>
+    <td>{{ ins[1] }}</td>
+    <td>{{ ins[2] }}</td>
+    <td>{{ ins[3] or '—' }}</td>
+
+    <!-- grouped-by-degree/semester list -->
+    <td>
+      {% if assignments.get(ins[0]) %}
+        <ul>
+          {% for grp, clist in assignments[ins[0]].items() %}
+            <li><b>{{ grp }}</b>
+                <ul>{% for c in clist %}<li>{{ c }}</li>{% endfor %}</ul>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}—{% endif %}
+    </td>
+
+    <!-- delete button -->
+    <td>
+      <form method="post"
+            action="{{ url_for('delete_instructor_route', instructor_id=ins[0]) }}">
+        <button type="submit"
+                onclick="return confirm('Delete instructor {{ ins[1] }}?')">
+          Delete
+        </button>
+      </form>
+    </td>
+</tr>
+{% endfor %}
+  </table>
+</body></html>

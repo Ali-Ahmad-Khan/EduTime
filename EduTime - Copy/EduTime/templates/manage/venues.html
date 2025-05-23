@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Venues</title>
+</head>
+<body>
+    <h2>Manage Classrooms & Labs</h2>
+    <table border="1" cellpadding="6">
+        <tr>
+            <th>ID</th>
+            <th>Room Number</th>
+            <th>Room Type</th>
+            <th>Action</th>
+        </tr>
+        {% for room in rooms %}
+        <tr>
+            <td>{{ room[0] }}</td>
+            <td>{{ room[1] }}</td>
+            <td>{{ room[2] }}</td>
+            <td>
+                <form action="{{ url_for('delete_room_route', room_id=room[0]) }}" method="post">
+                    <button type="submit" onclick="return confirm('Delete this room?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+<a href="{{ url_for('admin_home') }}" class="btn btn-secondary" style="margin-top: 20px;">← Back to Admin Home</a>
+
+</body>
+</html>

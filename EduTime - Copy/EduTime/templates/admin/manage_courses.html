@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Courses - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Manage Courses</h1>
+    <p>View and manage courses for all degree programs</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Courses</h3>
+        <a href="{{ url_for('admin.setup_courses') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Courses
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Filter controls -->
+        <div class="filters-container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="department-filter">Department</label>
+                        <select id="department-filter" class="form-control">
+                            <option value="">All Departments</option>
+                            {% for dept in departments %}
+                            <option value="{{ dept[0] }}">{{ dept[2] }} ({{ dept[1] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="degree-filter">Degree</label>
+                        <select id="degree-filter" class="form-control">
+                            <option value="">All Degrees</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if courses %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Credits</th>
+                        <th>Degree</th>
+                        <th>Semester</th>
+                        <th>Instructors</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr class="course-row" 
+                        data-dept-id="{{ course[8] }}" 
+                        data-degree-id="{{ course[9] }}">
+                        <td>{{ course[0] }}</td>
+                        <td>{{ course[1] }}</td>
+                        <td>{{ 'Lab' if course[3] else 'Lecture' }}</td>
+                        <td>{{ course[2] }}</td>
+                        <td>{{ course[4] }} ({{ course[6] }})</td>
+                        <td>{{ course[5] }}</td>
+                        <td>
+                            {% if course[7] > 0 %}
+                                <span class="badge badge-success">{{ course[7] }}</span>
+                            {% else %}
+                                <span class="badge badge-warning">None</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.assign_courses') }}?course_id={{ course[0] }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-user-plus"></i> Assign
+                            </a>
+                            <form method="post" action="{{ url_for('admin.delete_course_route', course_id=course[0]) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this course?');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No courses found</h4>
+                <p>Start by adding courses using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Filter courses when department changes
+        $('#department-filter').change(function() {
+            const deptId = $(this).val();
+            
+            // Update degree dropdown
+            $('#degree-filter').empty().append('<option value="">All Degrees</option>');
+            
+            // Only add relevant degrees if a department is selected
+            if (deptId) {
+                {% for degree in degrees %}
+                if ("{{ degree[3] }}" === deptId) {
+                    $('#degree-filter').append(
+                        $('<option></option>')
+                            .attr('value', "{{ degree[0] }}")
+                            .text("{{ degree[1] }} ({{ degree[2] }})")
+                    );
+                }
+                {% endfor %}
+                
+                // Filter table rows by department
+                $('.course-row').hide();
+                $('.course-row[data-dept-id="' + deptId + '"]').show();
+            } else {
+                // Show all rows if no department selected
+                $('.course-row').show();
+            }
+            
+            // Reset degree filter
+            $('#degree-filter').val('');
+        });
+        
+        // Filter courses when degree changes
+        $('#degree-filter').change(function() {
+            const degreeId = $(this).val();
+            const deptId = $('#department-filter').val();
+            
+            if (degreeId) {
+                // Filter by degree
+                $('.course-row').hide();
+                $('.course-row[data-degree-id="' + degreeId + '"]').show();
+            } else if (deptId) {
+                // Filter by department if degree not selected
+                $('.course-row').hide();
+                $('.course-row[data-dept-id="' + deptId + '"]').show();
+            } else {
+                // Show all if nothing selected
+                $('.course-row').show();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .d-inline {
+        display: inline;
+    }
+    
+    .btn-sm {
+        margin-right: 5px;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+    
+    .badge-success {
+        background-color: var(--success-color);
+        color: white;
+    }
+    
+    .badge-warning {
+        background-color: var(--warning-color);
+        color: white;
+    }
+    
+    .filters-container {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+    
+    .col-md-4 {
+        width: 33.33%;
+        padding: 0 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-4 {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

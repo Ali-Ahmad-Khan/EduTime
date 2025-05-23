@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup Courses</title>
+</head>
+<body>
+    <h2>Setup Courses for Semester {{ semester_no }} of {{ degree_name }}</h2>
+    <form method="post">
+        {% for i in range(num_courses) %}
+            <fieldset>
+                <legend>Course {{ i+1 }}</legend>
+                <label>Course Name:</label>
+                <input type="text" name="name_{{ i }}" required><br><br>
+
+                <label>Credit Hours:</label>
+                <input type="number" name="credits_{{ i }}" min="1" required><br><br>
+
+                <label>Has Lab:</label>
+                <input type="checkbox" name="lab_{{ i }}"><br><br>
+            </fieldset>
+            <hr>
+        {% endfor %}
+
+        <input type="hidden" name="degree_id" value="{{ degree_id }}">
+        <input type="hidden" name="semester_id" value="{{ semester_id }}">
+        <input type="hidden" name="num_courses" value="{{ num_courses }}">
+
+        <button type="submit">Submit All Courses</button>
+    </form>
+
+
+<a href="{{ url_for('admin_home') }}" class="btn btn-secondary" style="margin-top: 20px;">← Back to Admin Home</a>
+
+</body>
+</html>

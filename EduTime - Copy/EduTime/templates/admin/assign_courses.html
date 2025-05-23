@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Courses - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Assign Courses</h1>
+    <p>Assign instructors to courses or courses to instructors</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Course Assignments</h3>
+    </div>
+    <div class="card-body">
+        {% if instructor %}
+            <div class="instructor-info">
+                <h4>{{ instructor[1] }}</h4>
+                <p>Department: {{ instructor[3] }} ({{ instructor[4] }})</p>
+                <p>Email: {{ instructor[2] }}</p>
+            </div>
+            
+            <form method="post" action="{{ url_for('admin.assign_courses') }}?instructor_id={{ instructor[0] }}">
+                <input type="hidden" name="instructor_id" value="{{ instructor[0] }}">
+                
+                <div class="form-group">
+                    <label for="courses">Select Courses to Assign</label>
+                    <select id="courses" name="course_ids" class="form-control" multiple required>
+                        {% for course in available_courses %}
+                        <option value="{{ course[0] }}" {% if course[0] in assigned_course_ids %}selected{% endif %}>
+                            {{ course[1] }} ({{ course[4] }} - Semester {{ course[5] }}) - {{ 'Lab' if course[3] else 'Lecture' }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple courses</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Assignments</button>
+                    <a href="{{ url_for('admin.manage_instructors') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        {% elif course %}
+            <div class="course-info">
+                <h4>{{ course[1] }}</h4>
+                <p>Type: {{ 'Lab' if course[3] else 'Lecture' }} | Credits: {{ course[2] }}</p>
+                <p>Degree: {{ course[4] }} | Semester: {{ course[5] }}</p>
+            </div>
+            
+            <form method="post" action="{{ url_for('admin.assign_courses') }}?course_id={{ course[0] }}">
+                <input type="hidden" name="course_id" value="{{ course[0] }}">
+                
+                <div class="form-group">
+                    <label for="instructor_id">Select Instructor</label>
+                    <select id="instructor_id" name="instructor_id" class="form-control" required>
+                        <option value="">-- Select Instructor --</option>
+                        {% for instructor in available_instructors %}
+                        <option value="{{ instructor[0] }}" {% if instructor[0] == assigned_instructor_id %}selected{% endif %}>
+                            {{ instructor[1] }} ({{ instructor[4] }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Assignment</button>
+                    <a href="{{ url_for('admin.manage_courses') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No selection made</h4>
+                <p>Please select an instructor or course to assign.</p>
+                <div class="mt-3">
+                    <a href="{{ url_for('admin.manage_instructors') }}" class="btn btn-primary">Select Instructor</a>
+                    <a href="{{ url_for('admin.manage_courses') }}" class="btn btn-primary">Select Course</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .instructor-info, .course-info {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: var(--light-bg);
+        border-radius: 8px;
+    }
+    
+    .instructor-info h4, .course-info h4 {
+        margin-top: 0;
+        color: var(--primary-color);
+    }
+    
+    select[multiple] {
+        height: 200px;
+    }
+    
+    .mt-3 {
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %} 

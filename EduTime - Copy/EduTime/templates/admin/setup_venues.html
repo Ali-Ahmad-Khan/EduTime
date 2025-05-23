@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Add Venues - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Add Venues</h1>
+    <p>Create new classrooms or labs for departments</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Create Multiple Venues</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('admin.setup_venues') }}">
+            <div class="form-group">
+                <label for="department_id">Department</label>
+                <select id="department_id" name="department_id" class="form-control" required>
+                    <option value="">-- Select Department --</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept[0] }}">{{ dept[2] }} ({{ dept[1] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="num_rooms">Number of Rooms</label>
+                <input type="number" id="num_rooms" name="num_rooms" class="form-control" min="1" max="50" value="5" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="room_type">Room Type</label>
+                <select id="room_type" name="room_type" class="form-control" required>
+                    <option value="CLASSROOM">Classroom</option>
+                    <option value="LAB">Laboratory</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Venues</button>
+                <a href="{{ url_for('admin.manage_venues') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+</style>
+{% endblock %} 

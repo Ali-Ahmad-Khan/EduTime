@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head><title>Assign Courses</title></head>
+<body>
+  <h2>Assign Course to Instructor</h2>
+
+  <!-- Step 1: Instructor -->
+  <form method="get">
+      <label>Instructor:</label>
+      <select name="instructor_id" required>
+          <option value="" disabled selected>Select instructor</option>
+          {% for ins in instructors %}
+              <option value="{{ ins[0] }}" {% if selected_ins == ins[0] %}selected{% endif %}>
+                  {{ ins[1] }}
+              </option>
+          {% endfor %}
+      </select>
+      <button type="submit">Load Degrees</button>
+  </form>
+
+  {% if selected_ins %}
+  <hr>
+
+  <!-- Step 2: Degree (filtered by department) -->
+  <form method="get">
+      <input type="hidden" name="instructor_id" value="{{ selected_ins }}">
+
+      <label>Degree:</label>
+      <select name="degree_id" required>
+          <option value="" disabled selected>Select degree</option>
+          {% for d in degrees %}
+              <option value="{{ d[0] }}" {% if selected_deg == d[0] %}selected{% endif %}>
+                  {{ d[1] }}
+              </option>
+          {% endfor %}
+      </select>
+      <button type="submit">Load Courses</button>
+  </form>
+  {% endif %}
+
+  {% if selected_deg and courses %}
+  <hr>
+
+  <!-- Step 3: Assign Course -->
+  <form method="post">
+      <input type="hidden" name="action" value="assign">
+      <input type="hidden" name="instructor_id" value="{{ selected_ins }}">
+
+      <label>Course:</label>
+      <select name="course_id" required>
+          {% for c in courses %}
+             <option value="{{ c[0] }}">{{ c[1] }} (Sem {{ c[2] }})</option>
+          {% endfor %}
+      </select>
+      <button type="submit">Assign</button>
+  </form>
+  {% elif selected_deg %}
+     <p><b>No courses found for this degree.</b></p>
+  {% endif %}
+
+  {% if selected_ins and assigned_courses %}
+  <hr>
+  <h3>Assigned Courses</h3>
+  <ul>
+      {% for c in assigned_courses %}
+      <li>
+          {{ c[1] }} (Sem {{ c[2] }})
+          <form method="post" style="display:inline">
+              <input type="hidden" name="instructor_id" value="{{ selected_ins }}">
+              <input type="hidden" name="course_id" value="{{ c[0] }}">
+              <input type="hidden" name="action" value="unassign">
+              <button type="submit" onclick="return confirm('Unassign this course?')">Unassign</button>
+          </form>
+      </li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+</body>
+</html>

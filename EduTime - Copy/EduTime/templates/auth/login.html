@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Login - EduTime{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card auth-card">
+        <div class="card-header">
+            <h2 class="card-title">Login to EduTime</h2>
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="post" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 40px 0;
+    }
+    
+    .auth-card {
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background-color: var(--highlight-color);
+        border: none;
+    }
+    
+    .card-header {
+        background-color: var(--primary-color);
+        color: var(--text-dark);
+        text-align: center;
+        padding: 20px;
+        border-bottom: none;
+    }
+    
+    .card-title {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: black;
+    }
+    
+    .card-body {
+        padding: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+    
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 1rem;
+        background-color: var(--accent-color);
+        transition: all 0.3s;
+    }
+    
+    input:focus {
+        outline: none;
+        border-color: var(--dark-accent);
+        box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.2);
+    }
+    
+    .form-actions {
+        margin-top: 30px;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--dark-accent);
+        color: var(--text-light);
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background-color: #c29163;
+    }
+    
+    .auth-footer {
+        margin-top: 30px;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+    }
+    
+    .auth-footer a {
+        color: var(--dark-accent);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    .alert {
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+</style>
+{% endblock %} 

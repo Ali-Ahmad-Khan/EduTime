@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduTime{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-calendar-alt"></i> EduTime
+            </a>
+            <nav>
+                <ul>
+                    {% if session.user_id %}
+                        {% if session.role == 'ADMIN' %}
+                            <li><a href="{{ url_for('admin.home') }}">Dashboard</a></li>
+                            <li><a href="{{ url_for('admin.manage_departments') }}">Departments</a></li>
+                            <li><a href="{{ url_for('admin.manage_degrees') }}">Degrees</a></li>
+                            <li><a href="{{ url_for('admin.manage_courses') }}">Courses</a></li>
+                            <li><a href="{{ url_for('admin.manage_instructors') }}">Instructors</a></li>
+                            <li><a href="{{ url_for('admin.manage_venues') }}">Venues</a></li>
+                        {% elif session.role == 'INSTRUCTOR' %}
+                            <li><a href="{{ url_for('instructor.home') }}">Dashboard</a></li>
+                            <li><a href="{{ url_for('instructor.view_schedules') }}">My Schedule</a></li>
+                        {% elif session.role == 'STUDENT' %}
+                            <li><a href="{{ url_for('student.home') }}">Dashboard</a></li>
+                            <li><a href="{{ url_for('schedule.degrees_for_schedule') }}">View Schedules</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('auth.logout') }}">Logout ({{ session.name }})</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li><a href="{{ url_for('auth.signup') }}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <p>&copy; {{ now.year }} EduTime - Educational Timetable Management System</p>
+            </div>
+            <ul class="footer-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

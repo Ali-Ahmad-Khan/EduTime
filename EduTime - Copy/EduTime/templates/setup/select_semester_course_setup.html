@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Semester</title>
+</head>
+<body>
+    <h2>Select Degree & Semester to Setup Courses</h2>
+    <form method="post">
+        <label>Degree:</label>
+        <select name="degree_id" required>
+            {% for d in degrees %}
+                <option value="{{ d[0] }}">{{ d[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Semester No:</label>
+        <input type="number" name="semester_no" min="1" required><br><br>
+
+        <label>How many courses to add?</label>
+        <input type="number" name="course_count" min="1" required><br><br>
+
+        <button type="submit">Proceed</button>
+    </form>
+
+
+<a href="{{ url_for('admin_home') }}" class="btn btn-secondary" style="margin-top: 20px;">← Back to Admin Home</a>
+
+</body>
+</html>

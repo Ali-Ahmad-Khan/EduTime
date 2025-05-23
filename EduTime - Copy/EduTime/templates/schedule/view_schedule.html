@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{{ degree_name }} - Semester {{ semester_no }} Schedule - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ degree_name }} ({{ dept_prefix }}) - Semester {{ semester_no }}</h1>
+    <p>Weekly Class Schedule</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Schedule</h3>
+        <div>
+            <a href="{{ url_for('schedule.export_csv', degree_id=degree_id, semester_no=semester_no) }}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-download"></i> Export to CSV
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if schedule_grid %}
+            <div class="schedule-container">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            {% for day in days %}
+                                <th>{{ day }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for day, slots in time_slots.items() %}
+                            {% if day == days[0] %}
+                                {% for slot in slots %}
+                                    <tr>
+                                        <td class="time-slot">{{ slot.start }} - {{ slot.end }}</td>
+                                        {% for day in days %}
+                                            <td>
+                                                {% if day in schedule_grid and slot.no in schedule_grid[day] %}
+                                                    {% set class_item = schedule_grid[day][slot.no] %}
+                                                    <div class="{% if class_item.is_lab %}lab-cell{% else %}course-cell{% endif %}">
+                                                        <strong>{{ class_item.course }}</strong><br>
+                                                        {{ class_item.instructor }}<br>
+                                                        Room: {{ class_item.room }}
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <h4>No classes have been scheduled for this semester.</h4>
+                <p>Please use the "Generate Schedule" option from the admin panel to create a timetable.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="form-actions">
+    <a href="{{ url_for('schedule.degrees_for_schedule') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Degree Selection
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .schedule-container {
+        overflow-x: auto;
+    }
+    
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .schedule-table th, 
+    .schedule-table td {
+        border: 1px solid var(--border-color);
+        padding: 10px;
+        text-align: center;
+    }
+    
+    .time-slot {
+        font-weight: bold;
+        background-color: #f5f5f5;
+    }
+    
+    .course-cell {
+        background-color: rgba(52, 152, 219, 0.1);
+        border-radius: 4px;
+        padding: 8px;
+    }
+    
+    .lab-cell {
+        background-color: rgba(46, 204, 113, 0.1);
+        border-radius: 4px;
+        padding: 8px;
+    }
+    
+    .alert-warning {
+        background-color: rgba(243, 156, 18, 0.1);
+        border: 1px solid rgba(243, 156, 18, 0.3);
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    .form-actions {
+        margin-top: 1.5rem;
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+{% endblock %}

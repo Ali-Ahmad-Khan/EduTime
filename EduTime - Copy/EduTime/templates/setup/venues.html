@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>Setup Venues</title></head>
+<body>
+    <h2>Setup Classrooms and Labs</h2>
+    <form method="post">
+        <label>Department Prefix (e.g., CS):</label>
+        <input type="text" name="dept_prefix" maxlength="2" required><br><br>
+
+        <label>Department Full Name:</label>
+        <input type="text" name="dept_name" placeholder="e.g., Computer Science"><br><br>
+
+        <label>Number of Classrooms:</label>
+        <input type="number" name="num_classrooms" min="0" required><br><br>
+
+        <label>Number of Labs:</label>
+        <input type="number" name="num_labs" min="0" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

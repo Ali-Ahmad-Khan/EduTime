@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard - EduTime</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .main-content {
+            padding: 40px 0;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+    </style>
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-calendar-alt"></i> EduTime
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('student.home') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('schedule.degrees_for_schedule') }}">Schedules</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="main-content">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Student Dashboard</h1>
+                <div class="dashboard-info">
+                    <p>Welcome, {{ student_name }}</p>
+                </div>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="section">
+                <h2 class="section-title">My Programs</h2>
+                {% if degrees %}
+                    <div class="card-grid">
+                        {% for degree_id, info in degrees.items() %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>{{ info.name }}</h3>
+                                <div class="form-actions">
+                                    {% for semester in info.semesters %}
+                                        <a href="{{ url_for('schedule.view_schedule', degree_id=degree_id, semester_no=semester) }}" class="btn btn-primary">
+                                            Semester {{ semester }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No programs available to view.</p>
+                {% endif %}
+            </div>
+            
+            <div class="section">
+                <div class="appointments-heading">
+                    <h2 class="section-title">Schedule an Appointment</h2>
+                    <button class="btn btn-primary" onclick="openModal('appointment-modal')">
+                        Request New Appointment
+                    </button>
+                </div>
+                
+                <!-- Appointment Request Modal -->
+                <div id="appointment-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal('appointment-modal')">&times;</span>
+                        <h3>Request Appointment</h3>
+                        <form method="post" action="{{ url_for('student.request_appointment') }}">
+                            <div class="form-group">
+                                <label for="instructor_id">Select Instructor</label>
+                                <select id="instructor_id" name="instructor_id" required>
+                                    <option value="">-- Choose an instructor --</option>
+                                    {% for instructor in instructors %}
+                                    <option value="{{ instructor[0] }}" {% if instructor[1] == 'Ali Ahmad Khan' %}selected{% endif %}>{{ instructor[1] }} ({{ instructor[2] }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="date">Appointment Date</label>
+                                <input type="date" id="date" name="appt_date" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="start_time">Start Time</label>
+                                <input type="time" id="start_time" name="start_time" min="09:00" max="17:00" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="end_time">End Time</label>
+                                <input type="time" id="end_time" name="end_time" min="09:30" max="17:30" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="purpose">Purpose of Meeting</label>
+                                <textarea id="purpose" name="purpose" rows="5" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Submit Request</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">My Appointments</h2>
+                {% if appointments %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Instructor</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Purpose</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt[1] }}</td>
+                                    <td>{{ appt[2] }}</td>
+                                    <td>{{ appt[3] }} - {{ appt[4] }}</td>
+                                    <td>{{ appt[5] }}</td>
+                                    <td>
+                                        {% if appt[6] == 'PENDING' %}
+                                            <span class="status-badge status-pending">Pending</span>
+                                        {% elif appt[6] == 'CONFIRMED' %}
+                                            <span class="status-badge status-confirmed">Confirmed</span>
+                                        {% elif appt[6] == 'REJECTED' %}
+                                            <span class="status-badge status-rejected">Rejected</span>
+                                        {% elif appt[6] == 'COUNTER_PROPOSED' %}
+                                            <span class="status-badge status-counter">Counter Offer</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appt[6] == 'COUNTER_PROPOSED' %}
+                                            <div class="action-buttons">
+                                                <form method="post" action="{{ url_for('student.respond_to_appointment') }}" style="display:inline">
+                                                    <input type="hidden" name="appointment_id" value="{{ appt[0] }}">
+                                                    <input type="hidden" name="response" value="accept">
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                </form>
+                                                
+                                                <form method="post" action="{{ url_for('student.respond_to_appointment') }}" style="display:inline">
+                                                    <input type="hidden" name="appointment_id" value="{{ appt[0] }}">
+                                                    <input type="hidden" name="response" value="reject">
+                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="text-center" style="padding: 30px;">
+                        <p style="font-size: 1.2rem; color: var(--text-medium);">No appointments scheduled yet.</p>
+                        <button class="btn btn-primary" onclick="openModal('appointment-modal')" style="margin-top: 15px;">
+                            Schedule Your First Appointment
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <p>&copy; {{ now.year }} EduTime - Educational Scheduling System</p>
+            </div>
+            <ul class="footer-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Help</a></li>
+                <li><a href="#">Privacy</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html> 

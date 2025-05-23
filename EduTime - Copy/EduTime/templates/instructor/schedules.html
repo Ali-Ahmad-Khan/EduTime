@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}My Schedule - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>My Teaching Schedule</h1>
+    <p>Welcome, {{ instructor_name }}!</p>
+    {% if department %}
+    <p>Department: {{ department[1] }} ({{ department[2] }})</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Weekly Schedule</h3>
+    </div>
+    <div class="card-body">
+        {% if schedule_items %}
+            <div class="schedule-container">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'] %}
+                        {% set slots = [] %}
+                        
+                        {% for item in schedule_items %}
+                            {% if item[6] not in slots %}
+                                {% set _ = slots.append(item[6]) %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% for slot_time in slots|sort %}
+                            <tr>
+                                <td class="time-slot">{{ slot_time }}</td>
+                                {% for day in days %}
+                                    <td>
+                                        {% for item in schedule_items %}
+                                            {% if item[4] == day and item[6] == slot_time %}
+                                                <div class="{% if item[2] %}lab-cell{% else %}course-cell{% endif %}">
+                                                    <strong>{{ item[1] }}</strong><br>
+                                                    Room: {{ item[3] }}<br>
+                                                    {{ item[8] }} (Sem {{ item[9] }})
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>You don't have any scheduled classes yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">My Courses</h3>
+    </div>
+    <div class="card-body">
+        {% if degrees %}
+            {% for degree_id, degree_info in degrees.items() %}
+                <h4>{{ degree_info.name }}</h4>
+                <p>Semesters: {{ degree_info.semesters|join(', ') }}</p>
+            {% endfor %}
+        {% else %}
+            <p>You haven't been assigned any courses yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .schedule-container {
+        overflow-x: auto;
+    }
+    
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .schedule-table th, 
+    .schedule-table td {
+        border: 1px solid var(--border-color);
+        padding: 10px;
+        text-align: center;
+    }
+    
+    .time-slot {
+        font-weight: bold;
+        background-color: #f5f5f5;
+    }
+    
+    .course-cell {
+        background-color: rgba(52, 152, 219, 0.1);
+        border-radius: 4px;
+        padding: 8px;
+    }
+    
+    .lab-cell {
+        background-color: rgba(46, 204, 113, 0.1);
+        border-radius: 4px;
+        padding: 8px;
+    }
+</style>
+{% endblock %} 

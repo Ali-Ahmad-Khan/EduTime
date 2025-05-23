@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Degrees</title>
+</head>
+<body>
+    <h2>Manage Degrees</h2>
+    <table border="1" cellpadding="6">
+        <tr>
+            <th>ID</th>
+            <th>Degree Name</th>
+            <th>Department</th>
+            <th>Action</th>
+        </tr>
+        {% for degree in degrees %}
+        <tr>
+            <td>{{ degree[0] }}</td>
+            <td>{{ degree[1] }}</td>
+            <td>{{ degree[2] }}</td>
+            <td>
+                <form action="{{ url_for('delete_degree_route', degree_id=degree[0]) }}" method="post">
+                    <button type="submit" onclick="return confirm('Delete this degree?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+<a href="{{ url_for('admin_home') }}" class="btn btn-secondary" style="margin-top: 20px;">← Back to Admin Home</a>
+
+</body>
+</html>

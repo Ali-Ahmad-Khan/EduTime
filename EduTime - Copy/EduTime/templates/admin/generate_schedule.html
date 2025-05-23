@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Schedule - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Schedule Generation</h1>
+    <p>Generate and manage course schedules</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">Generate New Schedule</h3>
+            </div>
+            <div class="card-body">
+                <p>This will generate a complete schedule for all courses, instructors, and rooms.</p>
+                <p><strong>Warning:</strong> This will replace any existing schedule.</p>
+                
+                <form method="post" action="{{ url_for('schedule.generate_schedule') }}" onsubmit="return confirm('This will replace any existing schedule. Are you sure?');">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calendar-plus"></i> Generate Schedule
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        {% if schedule_summary and schedule_summary[0] > 0 %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">Current Schedule Summary</h3>
+            </div>
+            <div class="card-body">
+                <p>There are currently <strong>{{ schedule_summary[0] }}</strong> courses scheduled across <strong>{{ schedule_summary[1] }}</strong> semesters.</p>
+                
+                <h5 class="mt-3">Scheduled Degrees and Semesters:</h5>
+                <ul class="list-group">
+                    {% for degree in scheduled_degrees %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ degree[1] }} - Semester {{ degree[2] }}
+                        <a href="{{ url_for('schedule.view_schedule', degree_id=degree[0], semester_no=degree[2]) }}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Unscheduled Courses</h3>
+            </div>
+            <div class="card-body">
+                {% if unscheduled_courses %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Type</th>
+                            <th>Credits</th>
+                            <th>Degree</th>
+                            <th>Semester</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in unscheduled_courses %}
+                        <tr>
+                            <td>{{ course[1] }}</td>
+                            <td>{{ 'Lab' if course[2] else 'Lecture' }}</td>
+                            <td>{{ course[3] }}</td>
+                            <td>{{ course[7] }}</td>
+                            <td>{{ course[5] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="alert alert-info">
+                    <h4>All courses are scheduled!</h4>
+                    <p>There are no unscheduled courses in the system.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .list-group-item {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock %} 

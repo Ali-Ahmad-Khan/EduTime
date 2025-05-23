@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Add Instructor - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Add Instructor</h1>
+    <p>Register a new faculty member</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Instructor Information</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('admin.setup_instructors') }}">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="e.g., Dr. John Smith" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="e.g., john.smith@university.edu" required>
+                <small class="form-text text-muted">An email will be sent to this address for account setup</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="dept_prefix">Department</label>
+                <select id="dept_prefix" name="dept_prefix" class="form-control" required>
+                    <option value="">-- Select Department --</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept[2] }}">{{ dept[1] }} ({{ dept[2] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add Instructor</button>
+                <a href="{{ url_for('admin.manage_instructors') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+</style>
+{% endblock %} 

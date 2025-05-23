@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Degrees - EduTime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Manage Degrees</h1>
+    <p>View and manage degree programs</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Degree Programs</h3>
+        <a href="{{ url_for('admin.setup_degrees') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Degree
+        </a>
+    </div>
+    <div class="card-body">
+        {% if degrees %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Semesters</th>
+                        <th>Courses</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for degree in degrees %}
+                    <tr>
+                        <td>{{ degree[0] }}</td>
+                        <td>{{ degree[1] }}</td>
+                        <td>{{ degree[2] }} ({{ degree[3] }})</td>
+                        <td>{{ degree[4] }}</td>
+                        <td>{{ degree[5] }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.setup_courses') }}?degree_id={{ degree[0] }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-book"></i> Add Courses
+                            </a>
+                            <form method="post" action="{{ url_for('admin.delete_degree_route', degree_id=degree[0]) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this degree program?');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No degree programs found</h4>
+                <p>Start by adding a degree program using the button above.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .d-inline {
+        display: inline;
+    }
+    
+    .btn-sm {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %} 
