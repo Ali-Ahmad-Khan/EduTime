@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.sql linguist-detectable=true
+*.py linguist-detectable=false
+*.java linguist-detectable=false
