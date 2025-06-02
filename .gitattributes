@@ -3,3 +3,7 @@
 *.sql linguist-detectable=true
 *.py linguist-detectable=false
 *.java linguist-detectable=false
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+*.js linguist-detectable=false
+*.ps linguist-detectable=false
