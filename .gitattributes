@@ -6,4 +6,6 @@
 *.html linguist-detectable=false
 *.css linguist-detectable=false
 *.js linguist-detectable=false
-*.ps linguist-detectable=false
+*.ps1 linguist-detectable=false
+*.sh linguist-detectable=false
+*.bat linguist-detectable=false
